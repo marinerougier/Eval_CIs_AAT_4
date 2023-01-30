@@ -43,7 +43,7 @@ DESCRIPTION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <body></body>
 <script>
   /* Parameters */
-  var n = 1; // number of CIs randomly sample for each cell (should be 10)
+  var n = 3; // number of CIs randomly sample for each cell (should be 10)
   var githubCIs = 'stimuli/'; // github CIs path
 
   /* Initial variables */
@@ -211,37 +211,42 @@ var preview_subgroup = [
   imgLink_subgroup_app_placebo = _.sampleSize(imgLink_subgroup_app_placebo, n);
   imgLink_subgroup_av_placebo  = _.sampleSize(imgLink_subgroup_av_placebo, n);
 
+// Randomly pick 2 CIs from the previous selection for the preview
+  preview_imgLink_subgroup_app_instr  = _.sampleSize(imgLink_subgroup_app_instr, 2);
+  preview_imgLink_subgroup_av_instr  = _.sampleSize(imgLink_subgroup_av_instr, 2);
+  preview_imgLink_subgroup_app_placebo  = _.sampleSize(imgLink_subgroup_app_placebo, 2);
+  preview_imgLink_subgroup_av_placebo  = _.sampleSize(imgLink_subgroup_av_placebo, 2);
+
   // Add relative path to CIs
-  imgLink_avg = imgLink_avg.map(function(e) {return githubCIs + e});
+  CIsStims_avg = imgLink_avg.map(function(e) {return githubCIs + e});
   imgLink_subgroup_app_instr   = imgLink_subgroup_app_instr.map(function(e) {return githubCIs + e});
   imgLink_subgroup_av_instr    = imgLink_subgroup_av_instr.map(function(e) {return githubCIs + e});
   imgLink_subgroup_app_placebo = imgLink_subgroup_app_placebo.map(function(e) {return githubCIs + e});
   imgLink_subgroup_av_placebo  = imgLink_subgroup_av_placebo.map(function(e) {return githubCIs + e});
-  preview_subgroup = preview_subgroup.map(function(e) {return githubCIs + e});
-
-  // CIs stims
-  CIsStims_avg = imgLink_avg.map(function(e) {return {imgHtml: "<img class='imgJudge' src='" + e + "'>"}});
-  CIsStims_subgroup_app_instr = imgLink_subgroup_app_instr.map(function(e) {return {imgHtml: "<img class='imgJudge' src='" + e + "'>"}});
-  CIsStims_subgroup_av_instr = imgLink_subgroup_av_instr.map(function(e) {return {imgHtml: "<img class='imgJudge' src='" + e + "'>"}});
-  CIsStims_subgroup_app_placebo = imgLink_subgroup_app_placebo.map(function(e) {return {imgHtml: "<img class='imgJudge' src='" + e + "'>"}});
-  CIsStims_subgroup_av_placebo = imgLink_subgroup_av_placebo.map(function(e) {return {imgHtml: "<img class='imgJudge' src='" + e + "'>"}});
-  CIsStims_preview = preview_subgroup.map(function(e) {return {imgHtml: "<img class='imgJudge' src='" + e + "'>"}});
- // randomize order
-  CIsStims_avg = _.shuffle(CIsStims_avg);
-  CIsStims_subgroup_app_instr = _.shuffle(CIsStims_subgroup_app_instr);
-  CIsStims_subgroup_av_instr = _.shuffle(CIsStims_subgroup_av_instr);
-  CIsStims_subgroup_app_placebo = _.shuffle(CIsStims_subgroup_app_placebo);
-  CIsStims_subgroup_av_placebo = _.shuffle(CIsStims_subgroup_av_placebo);
-  CIsStims_preview = _.shuffle(CIsStims_preview);
+  preview_imgLink_subgroup_app_instr   = preview_imgLink_subgroup_app_instr.map(function(e) {return githubCIs + e});
+  preview_imgLink_subgroup_av_instr    = preview_imgLink_subgroup_av_instr.map(function(e) {return githubCIs + e});
+  preview_imgLink_subgroup_app_placebo = preview_imgLink_subgroup_app_placebo.map(function(e) {return githubCIs + e});
+  preview_imgLink_subgroup_av_placebo  = preview_imgLink_subgroup_av_placebo.map(function(e) {return githubCIs + e});
 
   // flatten deep
   var CIsStims_avg = _.flattenDeep([CIsStims_avg]);
-  var CIsStims_subgroup = _.flattenDeep([CIsStims_subgroup_app_instr, CIsStims_subgroup_av_instr, CIsStims_subgroup_app_placebo, CIsStims_subgroup_av_placebo]);
-  var CIsStims_preview = _.flattenDeep([CIsStims_preview]);
+  var CIsStims_subgroup = _.flattenDeep([imgLink_subgroup_app_instr, imgLink_subgroup_av_instr, imgLink_subgroup_app_placebo, imgLink_subgroup_av_placebo]);
+  var CIsStims_preview = _.flattenDeep([preview_imgLink_subgroup_app_instr, preview_imgLink_subgroup_av_instr, preview_imgLink_subgroup_app_placebo, preview_imgLink_subgroup_av_placebo]);
 
-  // Preload images
-  preloadimages.push(CIsStims_avg, CIsStims_subgroup, CIsStims_preview);
-  preloadimages = flatten(preloadimages);
+    // Preload images
+  preloadimages.push(CIsStims_avg);
+  preloadimages.push(CIsStims_subgroup);
+  preloadimages.push(CIsStims_preview);
+
+  // CIs stims
+  CIsStims_avg = CIsStims_avg.map(function(e) {return {imgHtml: "<img class='imgJudge' src='" + e + "'>"}});
+  CIsStims_subgroup = CIsStims_subgroup.map(function(e) {return {imgHtml: "<img class='imgJudge' src='" + e + "'>"}});
+  CIsStims_preview = CIsStims_preview.map(function(e) {return {imgHtml: "<img class='imgJudge' src='" + e + "'>"}});
+ 
+ // randomize order
+  CIsStims_avg = _.shuffle(CIsStims_avg);
+  CIsStims_subgroup = _.shuffle(CIsStims_subgroup);
+  CIsStims_preview = _.shuffle(CIsStims_preview);
 
   // EXPERIMENT --------------------------------------------------------------------------------------------------------
 
@@ -306,11 +311,11 @@ var preview_subgroup = [
     stimulus: function() {
       var html = "";
       html += "<h1>Faces rating</h1>";
-      html += "<p class='justify'>In this study, you task is to <b>evaluate several faces</b> (42 faces in total). You will indicate, "
+      html += "<p class='justify'>In this study, you task is to <b>evaluate several faces</b> (44 faces in total). You will indicate, "
       html += "for each face, to what extent this face looks <b>aggressive, trustworthy</b> and ";
       html += "<b>criminal</b> (from 0 = not at all to 100 = totally). </br> ";
       html += "As you will see, these faces have been <b>blurred</b> to make the task more challenging. </br></br>";
-      html += "This study consists in two parts. In Part 1, you will evaluate 2 faces and in Part 2 you will evaluate 40 faces. </br></br>";
+      html += "This study consists in two parts. In Part 1, you will evaluate 4 faces and in Part 2 you will evaluate 40 faces. </br></br>";
       html += "<p></br>Press <span class='light-keys'><kbd>space</kbd></span> to begin</p>";
       return html;
     },
@@ -324,7 +329,7 @@ var preview_subgroup = [
     stimulus: function() {
       var html = "";
       html += "<h1>Faces rating: Part 1</h1>";
-      html += "<p class='justify'>Before the evaluation task, <b>we will first briefly present you the 2 faces that you will evaluate</b> ";
+      html += "<p class='justify'>Before the evaluation task, <b>we will first briefly present you the 4 faces that you will evaluate</b> ";
       html += "for you to better gauge the similarities and differences between them. </br> ";
       html += "Faces will be <b>automatically paced</b> during 1 second each. Pleace remain focused.</br></br>";
       html += "<p></br>Press <span class='light-keys'><kbd>space</kbd></span> to begin</p>";
@@ -352,7 +357,7 @@ var preview_subgroup = [
     stimulus: function() {
       var html = "";
       html += "<h1>Faces rating: Part 1</h1>";
-      html += "<p class='justify'>Now, you will rate the 2 faces.</b>";
+      html += "<p class='justify'>Now, you will rate the 4 faces.</b>";
       html += " Again, try to answer <b> as honestly and as spontaneously as possible. </b></br></br>";
       html += "<p></br>Press <span class='light-keys'><kbd>space</kbd></span> to begin</p>";
       return html;
@@ -633,7 +638,7 @@ var preview_subgroup = [
       //jsPsych.data.displayData();
 
       /* Send data to Firebase and redirect to Qualtrics */
-      database.ref("Eval_Cis_AAT_3/" + id + "/").update({subdata}).then(function() { 
+      database.ref("Eval_Cis_AAT_4/" + id + "/").update({subdata}).then(function() { 
         console.log("data sent!");
         $("#jspsych-content").html(debrief);
         //window.location = qlink; // redirect to qualtrics
